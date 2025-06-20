@@ -1,13 +1,23 @@
 let cartItems = [];
 
 let pageItem = {
-        id: "1",
-        name: "Product 1",
-        price: 500,
-        size: "",
-        quantity: "",
-        image: `https://st.depositphotos.com/1017986/2626/i/450/depositphotos_26263587-stock-photo-man-in-blank-t-shirt.jpg`
-    };
+    id: "1",
+    name: "Marjan Signature Shirt",
+    price: 69.99,
+    size: "s",
+    color: "green",
+    quantity: 1,
+    image: `assets/imgs/shirt-green.jpg`
+};
+
+let images = {
+    green: 'assets/imgs/shirt-green.jpg',
+    black: 'assets/imgs/shirt-black.jpg',
+    gray: 'assets/imgs/shirt-gray.jpg',
+};
+
+let colorOrder = ['green', 'black', 'gray'];
+let currentColorIndex = 0;
 
 function saveCart() {
     localStorage.setItem('cart', JSON.stringify(cartItems));
@@ -15,11 +25,18 @@ function saveCart() {
 function refreshItem(){
     let quantityInput = document.getElementById('quantity');
     let quantity = quantityInput.value;
-    let selectedInput = document.querySelector('input[name="size"]:checked');
-    let selected = selectedInput.value;
+    let selectedSizeInput = document.querySelector('input[name="size"]:checked');
+    let selectedSize = selectedSizeInput.value;
+    let selectedColorInput = document.querySelector('input[name="color"]:checked');
+    let selectedColor = selectedColorInput.value;
 
     pageItem.quantity = parseInt(quantity, 10);
-    pageItem.size = selected;
+    pageItem.size = selectedSize;
+    pageItem.color = selectedColor;
+    pageItem.image = images[selectedColor];
+    
+    // Ensure currentColorIndex is in sync
+    currentColorIndex = colorOrder.indexOf(selectedColor);
 }
 function loadCartFromStorage() {
     const savedCart = localStorage.getItem('cart');
@@ -37,7 +54,7 @@ function loadCartFromStorage() {
 }
 function addToCart(item) {
     const existingItemIndex = cartItems.findIndex(cartItem => 
-        cartItem.id === item.id && cartItem.size === item.size
+        cartItem.id === item.id && cartItem.size === item.size && cartItem.color === item.color
     );
     if (existingItemIndex > -1) {
         cartItems[existingItemIndex].quantity += item.quantity || 1;
@@ -47,8 +64,8 @@ function addToCart(item) {
             quantity: item.quantity || 1
         });
     }
-    saveCart(); // Save to localStorage
-    loadCartFromStorage(); // Refresh display
+    saveCart();
+    loadCartFromStorage();
 }
 function updateCartCount() {
     const savedCart = localStorage.getItem('cart');
@@ -87,6 +104,58 @@ if (addToCartButton) {
         }
     });
 }
+
+function updateProductImage() {
+    const selectedColorInput = document.querySelector('input[name="color"]:checked');
+    const selectedColor = selectedColorInput.value;
+    const productImage = document.getElementById('product-image');
+    if (productImage && images[selectedColor]) {
+        productImage.src = images[selectedColor];
+    }
+    // Update current color index
+    currentColorIndex = colorOrder.indexOf(selectedColor);
+}
+
+function updateColorSelection(color) {
+    const colorInput = document.querySelector(`input[name="color"][value="${color}"]`);
+    if (colorInput) {
+        colorInput.checked = true;
+        updateProductImage();
+    }
+}
+
+function navigateToNextImage() {
+    currentColorIndex = (currentColorIndex + 1) % colorOrder.length;
+    const nextColor = colorOrder[currentColorIndex];
+    updateColorSelection(nextColor);
+}
+
+function navigateToPrevImage() {
+    currentColorIndex = (currentColorIndex - 1 + colorOrder.length) % colorOrder.length;
+    const prevColor = colorOrder[currentColorIndex];
+    updateColorSelection(prevColor);
+}
+
+// Add event listeners for color changes
+document.querySelectorAll('input[name="color"]').forEach(colorInput => {
+    colorInput.addEventListener('change', updateProductImage);
+});
+
+// Add event listeners for arrow navigation
+document.getElementById('next-image').addEventListener('click', navigateToNextImage);
+document.getElementById('prev-image').addEventListener('click', navigateToPrevImage);
+
+// Initialize the current color index based on the default selected color
+document.addEventListener('DOMContentLoaded', function() {
+    const selectedColorInput = document.querySelector('input[name="color"]:checked');
+    if (selectedColorInput) {
+        currentColorIndex = colorOrder.indexOf(selectedColorInput.value);
+    }
+});
+
+document.querySelectorAll('input[name="color"]').forEach(colorInput => {
+    colorInput.addEventListener('change', updateProductImage);
+});
 
 loadCartFromStorage();
 

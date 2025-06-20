@@ -316,9 +316,68 @@ nav {
     color: #ffffff;
     margin-bottom: 20px;
 }
+        .image-carousel-container {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+}
+
+.carousel-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.7);
+    border: none;
+    color: white;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    z-index: 10;
+    opacity: 0.8;
+}
+
+.carousel-arrow:hover {
+    background: rgba(0, 0, 0, 0.9);
+    opacity: 1;
+    transform: translateY(-50%) scale(1.1);
+}
+
+.carousel-arrow-left {
+    left: 20px;
+}
+
+.carousel-arrow-right {
+    right: 20px;
+}
+
+.carousel-arrow svg {
+    width: 20px;
+    height: 20px;
+}
+
+/* Hide arrows on small screens for better mobile experience */
+@media (max-width: 768px) {
+    .carousel-arrow {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .carousel-arrow-left {
+        left: 10px;
+    }
+    
+    .carousel-arrow-right {
+        right: 10px;
+    }
+}
 
 /* ============================================= */
-/*               SIZE SELECTOR                  */
+/*        SIZE SELECTOR & COLOR SELECTOR         */
 /* ============================================= */
 .size-selector {
     margin-bottom: 20px;
@@ -365,6 +424,39 @@ nav {
     background: rgba(255,255,255,0.2);
     border-color: #ffffff;
     color: #ffffff;
+}
+
+.color-selector {
+    margin-bottom: 1rem;
+}
+
+.color-options {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.color-option {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 3px solid transparent;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: block;
+}
+
+.color-options input[type="radio"] {
+    display: none;
+}
+
+.color-options input[type="radio"]:checked + .color-option {
+    border-color: #fff;
+    box-shadow: 0 0 0 2px #000;
+    transform: scale(1.1);
+}
+
+.color-option:hover {
+    transform: scale(1.05);
 }
 
 /* ============================================= */
@@ -628,10 +720,11 @@ footer {
     }
 }
 
-@media (max-width: 800px) {
-    .size-options {
+@media (max-width: 990px) {
+    .size-options, .color-options {
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
     }
+
 }

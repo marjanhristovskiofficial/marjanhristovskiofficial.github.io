@@ -20,7 +20,7 @@ function loadCartFromStorage() {
 }
 function addToCart(item) {
     const existingItemIndex = cartItems.findIndex(cartItem =>
-        cartItem.id === item.id && cartItem.size === item.size
+        cartItem.id === item.id && cartItem.size === item.size && cartItem.color === item.color
     );
     if (existingItemIndex > -1) {
         cartItems[existingItemIndex].quantity += item.quantity || 1;
@@ -34,21 +34,21 @@ function addToCart(item) {
     saveCart();
     loadCart();
 }
-function removeFromCart(itemId, size) {
+function removeFromCart(itemId, size, color) {
     cartItems = cartItems.filter(item =>
-        !(item.id === itemId && item.size === size)
+        !(item.id === itemId && item.size === size && item.color === color)
     );
     saveCart();
     loadCart();
 }
-function updateQuantity(itemId, size, newQuantity) {
+function updateQuantity(itemId, size, color, newQuantity) {
     const itemIndex = cartItems.findIndex(item =>
-        item.id === itemId && item.size === size
+        item.id === itemId && item.size === size && item.color === color
     );
 
     if (itemIndex > -1) {
         if (newQuantity <= 0) {
-            removeFromCart(itemId, size);
+            removeFromCart(itemId, size, color);
         } else {
             cartItems[itemIndex].quantity = newQuantity;
             saveCart();
@@ -92,14 +92,14 @@ function loadCart() {
                 <img src="${item.image}" alt="${item.name}" class="item-image">
                 <div class="item-details">
                     <div class="item-name">${item.name}</div>
-                    <div class="item-info">Size: ${item.size} | Quantity: ${item.quantity}</div>
+                    <div class="item-info">Size: ${item.size} | Color: ${item.color || 'N/A'} | Quantity: ${item.quantity}</div>
                     <div class="item-price">$${item.price.toFixed(2)} each</div>
                 </div>
                 <div class="item-actions">
-                    <button onclick="updateQuantity('${item.id}', '${item.size}', ${item.quantity - 1})" class="qty-btn">-</button>
+                    <button onclick="updateQuantity('${item.id}', '${item.size}', '${item.color || ''}', ${item.quantity - 1})" class="qty-btn">-</button>
                     <span class="quantity">${item.quantity}</span>
-                    <button onclick="updateQuantity('${item.id}', '${item.size}', ${item.quantity + 1})" class="qty-btn">+</button>
-                    <button onclick="removeFromCart('${item.id}', '${item.size}')" class="remove-btn">Remove</button>
+                    <button onclick="updateQuantity('${item.id}', '${item.size}', '${item.color || ''}', ${item.quantity + 1})" class="qty-btn">+</button>
+                    <button onclick="removeFromCart('${item.id}', '${item.size}', '${item.color || ''}')" class="remove-btn">Remove</button>
                 </div>
                 <div class="item-price">$${itemTotal.toFixed(2)}</div>
             </div>
@@ -145,6 +145,7 @@ function updateHiddenOrderText() {
     cartItems.forEach(item => {
         orderText += `• ${item.quantity}x ${item.name}\n`;
         orderText += `  Size: ${item.size}\n`;
+        orderText += `  Color: ${item.color || 'N/A'}\n`;
         orderText += `  Price: $${item.price.toFixed(2)} each\n`;
         orderText += `  Subtotal: $${(item.price * item.quantity).toFixed(2)}\n\n`;
     });
